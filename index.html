@@ -5,36 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px; /* adjust for nav height if needed */
+        }
+        html, body {
+            scroll-behavior: smooth;
+        }
+        /* Optional: Smoother scroll for browsers that support it */
+        @media (prefers-reduced-motion: no-preference) {
+            html {
+                scroll-behavior: smooth;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="nav-bar">
         <ul class="nav-list">
-            <li><a href="index.html" class="nav-link active">home</a></li>
-            <li><a href="about.html" class="nav-link">about</a></li>
-            <li><a href="projects.html" class="nav-link">projects</a></li>
+            <li><a href="#home" class="nav-link active">home</a></li>
+            <li><a href="#about" class="nav-link">about</a></li>
+            <li><a href="#projects" class="nav-link">projects</a></li>
         </ul>
     </nav>
 
     <main>
-        <div class="container">
-            <div class="card">
-                <h1>Hi, I'm Ergi Bezhani</h1>
-                <span class="handle">@ergibezhani</span>
-                <h2>Designer & Developer</h2>
-
-                <div class="socials">
-                    <a href="mailto:ergiibezhanii@mail.com" ><img src="svg/mail-alt-svgrepo-com.svg" alt="Email" title="Email me"></a>
-                    <a href="https://www.linkedin.com/in/ergiibezhanii/" target="_blank"><img src="svg/linkedin-svgrepo-com.svg" alt="" title="My LinkedIn"></a>
-                    <a href="https://github.com/ergibezhanii" target="_blank" title="My GitHub"><img src="svg/github-142-svgrepo-com.svg" alt=""></a>
-                    <a href="https://twitter.com/ergibezhani" target="_blank" title="My Twitter"><img src="svg/twitter-svgrepo-com.svg" alt=""></a>
-                    <a href="https://www.youtube.com/ergibezhani/" target="_blank" title="My YouTube"><img src="svg/youtube-svgrepo-com.svg" alt=""></a>
-
+        <section id="home">
+            <div class="container">
+                <div class="card">
+                    <h1>Hi, I'm Ergi Bezhani</h1>
+                    <span class="handle">@ergibezhani</span>
+                    <h2>Designer & Developer</h2>
+                    <div class="socials">
+                        <a href="mailto:ergiibezhanii@mail.com" ><img src="svg/mail-alt-svgrepo-com.svg" alt="Email" title="Email me"></a>
+                        <a href="https://www.linkedin.com/in/ergiibezhanii/" target="_blank"><img src="svg/linkedin-svgrepo-com.svg" alt="" title="My LinkedIn"></a>
+                        <a href="https://github.com/ergibezhanii" target="_blank" title="My GitHub"><img src="svg/github-142-svgrepo-com.svg" alt=""></a>
+                        <a href="https://twitter.com/ergibezhani" target="_blank" title="My Twitter"><img src="svg/twitter-svgrepo-com.svg" alt=""></a>
+                        <a href="https://www.youtube.com/ergibezhani/" target="_blank" title="My YouTube"><img src="svg/youtube-svgrepo-com.svg" alt=""></a>
+                    </div>
                 </div>
-            
-
             </div>
-        </div>
+        </section>
+        <section id="about">
+            <div class="container">
+                <div class="card">
+                    <div class="about">
+                        <h1>about me</h1>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente alias delectus saepe accusamus facere dolor velit maiores commodi, repellat soluta perferendis quas quia voluptatem non vitae architecto repellendus ea. Reiciendis!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="projects">
+            <div class="container">
+                <div class="project-list">
+                    <ul>
+                        <li><a href="#">Project 1</a></li>
+                        <li><a href="#">Project 2</a></li>
+                        <li><a href="#">Project 3</a></li>
+                        <li><a href="#">Project 4</a></li>
+                        <li><a href="#">Project 5</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
     </main>
+    <script>
+    // Smooth scroll for nav links and scrollspy effect
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('main section');
+
+    // Only handle scrollspy, not manual active class on click
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href').replace('#', '');
+            const section = document.getElementById(targetId);
+            if (section) {
+                e.preventDefault();
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 80; // adjust for nav height if needed
+            if (window.scrollY >= sectionTop) {
+                current = section.getAttribute('id');
+            }
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    });
+    </script>
 </body>
 </html>
