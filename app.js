@@ -1,23 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ergi Bezhani</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <nav class="nav">
-    <div class="nav-item" data-section="home">01</div>
-    <div class="nav-item" data-section="about">02</div>
-    <div class="nav-item" data-section="work">03</div>
-    <div class="nav-item" data-section="contact">04</div>
-  </nav>
+const contentDiv = document.getElementById('content');
 
-  <main id="content" style="scroll-margin-top:90px; min-height:100vh; overflow-y:auto;">
+const templates = {
+  home: `
     <section id="home">
       <div class="container">
         <div class="title-stack">
@@ -34,6 +18,8 @@
         </div>
       </div>
     </section>
+  `,
+  about: `
     <section id="about">
       <div class="container">
         <div class="section-header">
@@ -65,6 +51,8 @@
         </div>
       </div>
     </section>
+  `,
+  work: `
     <section id="work">
       <div class="container">
         <div class="section-header">
@@ -104,7 +92,8 @@
         </div>
       </div>
     </section>
-    
+  `,
+  contact: `
     <section id="contact">
       <div class="container">
         <div class="section-header">
@@ -136,8 +125,75 @@
         </div>
       </div>
     </section>
-  </main>
+  `
+};
 
-  <script src="app.js"></script>
-</body>
-</html>
+const sectionOrder = ['home', 'about', 'work', 'contact'];
+let currentSectionIdx = 0;
+
+function renderActiveSection(idx) {
+  const key = sectionOrder[idx] || 'home';
+  contentDiv.innerHTML = templates[key];
+  document.querySelectorAll('.nav-item').forEach((item, idx) => {
+    item.classList.toggle('active', idx === currentSectionIdx);
+  });
+  setTimeout(() => {
+    const section = contentDiv.querySelector('section');
+    if (section) section.classList.add('fade-in');
+  }, 10);
+}
+
+function smoothScrollTo(y, duration = 900) {
+  const startY = window.scrollY;
+  const change = y - startY;
+  const startTime = performance.now();
+  function animateScroll(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    window.scrollTo(0, startY + change * easeInOutQuad(progress));
+    if (progress < 1) {
+      requestAnimationFrame(animateScroll);
+    }
+  }
+  function easeInOutQuad(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+  requestAnimationFrame(animateScroll);
+}
+
+function goToSection(idx) {
+  if (idx < 0 || idx >= sectionOrder.length) return;
+  currentSectionIdx = idx;
+  renderActiveSection(currentSectionIdx);
+  // Smooth scroll to top of main#content
+  const main = document.querySelector('main#content');
+  if (main) {
+    const rect = main.getBoundingClientRect();
+    const scrollY = window.scrollY + rect.top;
+    smoothScrollTo(scrollY, 900);
+  }
+}
+
+window.addEventListener('load', () => {
+  renderActiveSection(currentSectionIdx);
+
+  let wheelAccumulator = 0;
+  const WHEEL_THRESHOLD = 100;
+  document.querySelector('main#content').addEventListener('wheel', (e) => {
+    wheelAccumulator += e.deltaY;
+    if (wheelAccumulator > WHEEL_THRESHOLD) {
+      goToSection(currentSectionIdx + 1);
+      wheelAccumulator = 0;
+    } else if (wheelAccumulator < -WHEEL_THRESHOLD) {
+      goToSection(currentSectionIdx - 1);
+      wheelAccumulator = 0;
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  document.querySelectorAll('.nav-item').forEach((item, idx) => {
+    item.addEventListener('click', () => {
+      goToSection(idx);
+    });
+  });
+});
